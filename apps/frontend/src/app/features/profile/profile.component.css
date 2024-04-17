@@ -1,0 +1,26 @@
+.header {
+  @apply flex p-4 items-center text-xl;
+}
+.header__profile {
+  @apply flex flex-row items-center gap-2;
+}
+.profile__image {
+  @apply w-10 rounded-full;
+}
+.header__tabs {
+  @apply flex self-center;
+}
+
+.divider {
+  @apply bg-[#333];
+}
+
+.main {
+  @apply flex h-full p-4 gap-4 text-xl;
+}
+.main__projects {
+  @apply flex flex-col;
+}
+.projects__project {
+  @apply flex p-4 min-w-40 rounded-xl border border-[#333] select-none hover:bg-white/10;
+}
