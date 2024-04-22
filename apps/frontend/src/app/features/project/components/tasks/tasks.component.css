@@ -1,0 +1,33 @@
+.tasks {
+  @apply flex flex-col w-full;
+}
+.tasks__header {
+  @apply flex mb-4 justify-between;
+}
+.header__title {
+  @apply font-bold text-3xl;
+}
+.header__button {
+  @apply text-secondary;
+}
+
+.tasks__filter {
+  @apply mb-4 w-min text-black;
+}
+
+.tasks__table {
+  @apply table-fixed w-full rounded-md bg-secondary/10;
+}
+.table__head {
+  @apply border-b border-secondary/15;
+}
+.table__row {
+  @apply border-t border-secondary/15 hover:bg-secondary/5;
+}
+.table__cell {
+  @apply px-6 py-4 whitespace-nowrap;
+}
+
+::ng-deep .mat-sort-header-arrow.ng-trigger.ng-trigger-arrowPosition {
+  @apply text-secondary;
+}

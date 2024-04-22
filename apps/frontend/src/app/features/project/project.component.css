@@ -1,0 +1,19 @@
+.project {
+  @apply flex h-screen;
+}
+.project__menu {
+  @apply flex flex-col h-full p-4;
+}
+.project__workspace {
+  @apply flex w-full p-4;
+}
+.project__divider {
+  @apply bg-secondary/20;
+}
+
+.menu__button {
+  @apply flex p-2 rounded-md hover:bg-secondary/10;
+}
+.button__content {
+  @apply flex w-full h-full gap-1;
+}

@@ -12,15 +12,15 @@
 }
 
 .divider {
-  @apply bg-[#333];
+  @apply bg-secondary/20;
 }
 
 .main {
   @apply flex h-full p-4 gap-4 text-xl;
 }
-.main__projects {
-  @apply flex flex-col;
+.main__project {
+  @apply flex flex-col min-w-40 rounded-xl border border-secondary/20 select-none hover:bg-secondary/10;
 }
-.projects__project {
-  @apply flex p-4 min-w-40 rounded-xl border border-[#333] select-none hover:bg-white/10;
+.project__content {
+  @apply flex p-4;
 }

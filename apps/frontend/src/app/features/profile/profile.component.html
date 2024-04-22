@@ -9,10 +9,14 @@
 </header>
 <mat-divider class="divider"></mat-divider>
 <main class="main">
-  <div *ngFor="let project of projects" class="main__projects">
-    <a class="projects__project" routerLink="/project">
+  <a
+    *ngFor="let project of projects"
+    [routerLink]="['project', project.trim()]"
+    class="main__project"
+  >
+    <div class="project__content">
       {{ project }}
-    </a>
-  </div>
+    </div>
+  </a>
 </main>
 <router-outlet></router-outlet>

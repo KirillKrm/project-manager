@@ -1,1 +1,16 @@
-<p>project works!</p>
+<div class="project">
+  <div class="project__menu">
+    <a
+      *ngFor="let menuButton of menuButtons"
+      [routerLink]="[menuButton.url]"
+      class="menu__button"
+    >
+      <div class="button__content">
+        <mat-icon>{{ menuButton.icon }}</mat-icon>
+        {{ menuButton.name }}
+      </div>
+    </a>
+  </div>
+  <mat-divider class="project__divider" [vertical]="true"></mat-divider>
+  <div class="project__workspace"><router-outlet></router-outlet></div>
+</div>

@@ -1,0 +1,32 @@
+<div class="tasks">
+  <div class="tasks__header">
+    <h1 class="header__title">Tasks</h1>
+    <button class="header__button" mat-flat-button color="primary">
+      New task
+    </button>
+  </div>
+  <input
+    class="tasks__filter"
+    matInput
+    (keyup)="applyFilter($event)"
+    placeholder="Filter tasks..."
+  />
+  <table class="tasks__table" matSort (matSortChange)="sortData($event)">
+    <thead class="table__head">
+      <tr>
+        <th class="table__cell" mat-sort-header="title">Title</th>
+        <th class="table__cell" mat-sort-header="status">Status</th>
+        <th class="table__cell" mat-sort-header="priority">Priority</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (task of sortedTasks | filter: filter; track task) {
+      <tr class="table__row">
+        <td class="table__cell">{{ task.title }}</td>
+        <td class="table__cell">{{ task.status }}</td>
+        <td class="table__cell">{{ task.priority }}</td>
+      </tr>
+      }
+    </tbody>
+  </table>
+</div>
