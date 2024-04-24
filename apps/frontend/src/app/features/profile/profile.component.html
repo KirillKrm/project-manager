@@ -4,19 +4,23 @@
       class="profile__image"
       src="https://media.istockphoto.com/id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=612x612&w=0&k=20&c=yBeyba0hUkh14_jgv1OKqIH0CCSWU_4ckRkAoy2p73o="
     />
-    <span>Name</span>
+    <span>Name Surname</span>
   </div>
+  <button mat-flat-button color="warn">Log Out</button>
 </header>
 <mat-divider class="divider"></mat-divider>
 <main class="main">
-  <a
-    *ngFor="let project of projects"
-    [routerLink]="['project', project.trim()]"
-    class="main__project"
-  >
-    <div class="project__content">
-      {{ project }}
-    </div>
-  </a>
+  <h1 class="main__title">Projects</h1>
+  <div class="main__projects">
+    <a
+      *ngFor="let project of projects"
+      [routerLink]="['project', project.trim()]"
+      class="main__project"
+    >
+      <div class="project__content">
+        {{ project }}
+      </div>
+    </a>
+  </div>
 </main>
 <router-outlet></router-outlet>

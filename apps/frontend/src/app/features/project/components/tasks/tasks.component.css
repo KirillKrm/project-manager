@@ -7,12 +7,9 @@
 .header__title {
   @apply font-bold text-3xl;
 }
-.header__button {
-  @apply text-secondary;
-}
 
 .tasks__filter {
-  @apply mb-4 w-min text-black;
+  @apply w-min;
 }
 
 .tasks__table {

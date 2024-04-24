@@ -1,5 +1,5 @@
 .header {
-  @apply flex p-4 items-center text-xl;
+  @apply flex p-4 justify-between items-center text-xl;
 }
 .header__profile {
   @apply flex flex-row items-center gap-2;
@@ -16,7 +16,13 @@
 }
 
 .main {
-  @apply flex h-full p-4 gap-4 text-xl;
+  @apply flex flex-col h-full p-4 gap-4;
+}
+.main__title {
+  @apply text-3xl font-bold;
+}
+.main__projects {
+  @apply flex gap-4 text-xl;
 }
 .main__project {
   @apply flex flex-col min-w-40 rounded-xl border border-secondary/20 select-none hover:bg-secondary/10;

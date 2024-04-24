@@ -1,16 +1,17 @@
 <div class="tasks">
   <div class="tasks__header">
     <h1 class="header__title">Tasks</h1>
-    <button class="header__button" mat-flat-button color="primary">
+    <button mat-flat-button color="primary" (click)="openDialog('0ms', '0ms')">
       New task
     </button>
   </div>
-  <input
-    class="tasks__filter"
-    matInput
-    (keyup)="applyFilter($event)"
-    placeholder="Filter tasks..."
-  />
+  <mat-form-field class="tasks__filter">
+    <input
+      matInput
+      (keyup)="applyFilter($event)"
+      placeholder="Filter tasks..."
+    />
+  </mat-form-field>
   <table class="tasks__table" matSort (matSortChange)="sortData($event)">
     <thead class="table__head">
       <tr>

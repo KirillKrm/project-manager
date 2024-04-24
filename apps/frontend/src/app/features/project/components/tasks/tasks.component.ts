@@ -1,12 +1,15 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
+import { MatDialog } from '@angular/material/dialog';
+import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatTableModule } from '@angular/material/table';
 import { Sort, MatSortModule } from '@angular/material/sort';
 
 import { FilterPipe } from './filter.pipe';
+import { TaskCreateDialogComponent } from './task-create-dialog.component';
 
 export interface Task {
   title: string;
@@ -24,6 +27,7 @@ export interface Task {
     MatTableModule,
     MatSortModule,
     FilterPipe,
+    MatInputModule,
   ],
   templateUrl: './tasks.component.html',
   styleUrl: './tasks.component.css',
@@ -36,8 +40,10 @@ export class TasksComponent {
     { title: 'Task 4', status: 'Done', priority: 'Normal' },
   ];
 
-  filter!: string;
-  sortedTasks: Task[] = this.tasks;
+  constructor(public dialog: MatDialog) {}
+
+  public filter!: string;
+  public sortedTasks: Task[] = this.tasks;
 
   applyFilter(event: Event) {
     this.filter = (event.target as HTMLInputElement).value.trim().toLowerCase();
@@ -67,5 +73,16 @@ export class TasksComponent {
 
   compare(a: string, b: string, isAsc: boolean) {
     return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
+  }
+
+  openDialog(
+    enterAnimationDuration: string,
+    exitAnimationDuration: string
+  ): void {
+    this.dialog.open(TaskCreateDialogComponent, {
+      width: '250px',
+      enterAnimationDuration,
+      exitAnimationDuration,
+    });
   }
 }
