@@ -19,7 +19,7 @@
   @apply border-b border-secondary/15;
 }
 .table__row {
-  @apply border-t border-secondary/15 hover:bg-secondary/5;
+  @apply border-t border-secondary/15 hover:bg-secondary/5 hover:cursor-pointer;
 }
 .table__cell {
   @apply px-6 py-4 whitespace-nowrap;

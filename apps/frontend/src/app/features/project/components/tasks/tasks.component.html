@@ -22,7 +22,7 @@
     </thead>
     <tbody>
       @for (task of sortedTasks | filter: filter; track task) {
-      <tr class="table__row">
+      <tr class="table__row" (click)="openDialog('0ms', '0ms', task)">
         <td class="table__cell">{{ task.title }}</td>
         <td class="table__cell">{{ task.status }}</td>
         <td class="table__cell">{{ task.priority }}</td>

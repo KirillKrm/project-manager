@@ -9,12 +9,12 @@ import { MatTableModule } from '@angular/material/table';
 import { Sort, MatSortModule } from '@angular/material/sort';
 
 import { FilterPipe } from './filter.pipe';
-import { TaskCreateDialogComponent } from './task-create-dialog.component';
+import { TaskDialogComponent } from './task-dialog.component';
 
 export interface Task {
   title: string;
-  status: string;
-  priority: string;
+  status: 'To Do' | 'Done';
+  priority: 'Low' | 'Normal' | 'High';
 }
 
 @Component({
@@ -77,12 +77,13 @@ export class TasksComponent {
 
   openDialog(
     enterAnimationDuration: string,
-    exitAnimationDuration: string
+    exitAnimationDuration: string,
+    task?: Task
   ): void {
-    this.dialog.open(TaskCreateDialogComponent, {
-      width: '250px',
+    this.dialog.open(TaskDialogComponent, {
       enterAnimationDuration,
       exitAnimationDuration,
+      data: { task },
     });
   }
 }
