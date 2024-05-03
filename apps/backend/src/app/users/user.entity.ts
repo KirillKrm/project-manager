@@ -1,51 +1,27 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { IsEmail, IsNotEmpty, Matches, MinLength } from 'class-validator';
+import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Exclude } from 'class-transformer';
 
-@Entity()
-export class User {
+import { PasswordTransformer } from '../../common/password.transformer';
+import { UUID } from 'crypto';
+
+@Entity({ name: 'users' })
+export class User extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id: UUID;
 
-  @Column({ nullable: false, type: 'text' })
+  @Column({ type: 'varchar', length: '64' })
   username: string;
 
-  @Column({ nullable: false, type: 'text' })
+  @Column({ type: 'varchar', length: '255' })
+  photo: string;
+
+  @Column({ unique: true, type: 'varchar', length: '255' })
   email: string;
 
   @Column({
-    type: 'text',
-    select: false,
-    nullable: false,
+    nullable: true,
+    //transformer: new PasswordTransformer(),
   })
-  hash: string;
-}
-
-export class RegisterUserDto {
-  @IsNotEmpty()
-  @MinLength(4)
-  username: string;
-
-  @IsNotEmpty()
-  @IsEmail()
-  email: string;
-
-  @IsNotEmpty()
-  /**
-   * - At least 1 uppercase letter
-   * - at least 1 special character !@#$&*^()
-   * - at least 1 number
-   * - at least 1 lowercase letter
-   * - min length 8
-   * **/
-  @Matches(/^(?=.*[A-Z].*)(?=.*[!@#$&*^()\-_])(?=.*[0-9].*)(?=.*[a-z].*).{8,}$/)
-  password: string;
-}
-
-export class LoginDto {
-  @IsNotEmpty()
-  @IsEmail()
-  email: string;
-
-  @IsNotEmpty()
+  //@Exclude({ toPlainOnly: true })
   password: string;
 }

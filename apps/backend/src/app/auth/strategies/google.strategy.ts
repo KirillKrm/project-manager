@@ -1,36 +1,34 @@
-import { Strategy, VerifyCallback } from 'passport-google-oauth20';
+import { Profile, Strategy } from 'passport-google-oauth20';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { AuthService } from '../auth.service';
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
-  constructor() {
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly authService: AuthService
+  ) {
     super({
-      clientID: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: process.env.GOOGLE_CALLBACK_URL,
-      scope: ['email', 'profile'],
+      clientID: configService.get('GOOGLE_CLIENT_ID'),
+      clientSecret: configService.get('GOOGLE_CLIENT_SECRET'),
+      callbackURL: configService.get('GOOGLE_CALLBACK_URL'),
+      scope: ['profile', 'email'],
     });
   }
 
-  async validate(
-    accessToken: string,
-    refreshToken: string,
-    profile: any,
-    done: VerifyCallback
-  ) {
-    const { id, name, emails, photos } = profile;
+  async validate(accessToken: string, refreshToken: string, profile: Profile) {
+    const { name, emails, photos } = profile;
 
-    const user = {
-      provider: 'google',
-      providerId: id,
+    const userDetails = {
       email: emails[0].value,
-      name: `${name.givenName} ${name.familyName}`,
-      picture: photos[0].value,
+      username: `${name.givenName} ${name.familyName}`,
+      photo: photos[0].value,
     };
 
-    done(null, user);
+    const user = this.authService.validateGoogleUser(userDetails);
 
-    return { profile, accessToken };
+    return user || null;
   }
 }
