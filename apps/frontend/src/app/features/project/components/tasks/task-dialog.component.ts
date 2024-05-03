@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormControl,
@@ -21,7 +21,8 @@ import {
 } from '@angular/material/dialog';
 import { merge } from 'rxjs';
 
-import { Task } from './tasks.component';
+import { Task } from '../../../../shared/Task';
+import { TasksService } from '../../../../core/tasks.service';
 
 @Component({
   selector: 'app-task-dialog',
@@ -41,11 +42,12 @@ import { Task } from './tasks.component';
     MatSelectModule,
   ],
 })
-export class TaskDialogComponent {
+export class TaskDialogComponent implements OnInit {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: { task?: Task },
     public dialogRef: MatDialogRef<TaskDialogComponent>,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private tasksService: TasksService
   ) {
     merge(
       this.title.statusChanges,
@@ -53,6 +55,10 @@ export class TaskDialogComponent {
       this.status.statusChanges,
       this.priority.statusChanges
     ).pipe(takeUntilDestroyed());
+  }
+
+  ngOnInit(): void {
+    console.log();
   }
 
   errorMessage = 'You must enter a value';
