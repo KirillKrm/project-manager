@@ -2,6 +2,10 @@ import { IsDefined, IsNumberString, IsString } from 'class-validator';
 
 export class EnvConfigSchema {
   @IsDefined()
+  @IsNumberString()
+  PORT: string;
+
+  @IsDefined()
   @IsString()
   GOOGLE_CLIENT_ID: string;
 
@@ -42,14 +46,18 @@ export class EnvConfigSchema {
   JWT_SECRET: string;
 
   @IsDefined()
-  @IsNumberString()
-  JWT_ACCESS_EXPIRE: number;
+  @IsString()
+  JWT_ACCESS_EXPIRE: string;
 
   @IsDefined()
   @IsString()
   JWT_REFRESH_SECRET: string;
 
   @IsDefined()
-  @IsNumberString()
-  JWT_REFRESH_EXPIRE: number;
+  @IsString()
+  JWT_REFRESH_EXPIRE: string;
+
+  @IsDefined()
+  @IsString()
+  SESSION_SECRET: string;
 }

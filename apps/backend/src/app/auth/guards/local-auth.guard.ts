@@ -1,12 +1,32 @@
-import { ExecutionContext, Injectable } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { Observable } from 'rxjs';
+
+import { AuthService } from '../auth.service';
 
 @Injectable()
-export class LocalAuthGuard extends AuthGuard('local') {
-  async canActivate(context: ExecutionContext) {
-    const activate = (await super.canActivate(context)) as boolean;
+export class LocalAuthGuard extends AuthGuard('local') implements CanActivate {
+  constructor(private readonly authService: AuthService) {
+    super();
+  }
+
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
-    await super.logIn(request);
-    return activate;
+    const { email, password } = request.body;
+    try {
+      const user = await this.authService.validateUser(email, password);
+      if (!user) {
+        throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
+      }
+    } catch (e) {
+      throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
+    }
+    return true;
   }
 }

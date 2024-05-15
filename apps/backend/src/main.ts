@@ -2,18 +2,20 @@ import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import session from 'express-session';
 import passport from 'passport';
+import { ConfigService } from '@nestjs/config';
 
 import { AppModule } from './app/app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const globalPrefix = 'api';
-  const port = process.env.PORT || 3000;
+  const configService = app.get(ConfigService);
+  const port = configService.get('PORT');
 
   app.setGlobalPrefix(globalPrefix);
   app.use(
     session({
-      secret: process.env.SESSION_SECRET,
+      secret: configService.get('SESSION_SECRET'),
       saveUninitialized: false,
       resave: false,
       cookie: {

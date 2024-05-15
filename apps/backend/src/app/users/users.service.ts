@@ -1,5 +1,7 @@
 import {
   ConflictException,
+  HttpException,
+  HttpStatus,
   Injectable,
   Logger,
   NotFoundException,
@@ -10,6 +12,7 @@ import { UUID } from 'crypto';
 
 import { User } from './user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
+import { CreateGoogleUserDto } from './dto/create-google-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -25,10 +28,26 @@ export class UsersService {
       email: createUserDto.email,
     });
     if (checkByEmail) {
-      throw new ConflictException('Email address already taken');
+      throw new ConflictException('Email adress already taken');
     }
 
     const res = await this.userRepository.save(createUserDto);
+    this.logger.log(`User ${res.id} created successfully`);
+
+    return res;
+  }
+
+  async createGoogleUser(
+    createGoogleUserDto: CreateGoogleUserDto
+  ): Promise<User> {
+    const checkByEmail = await this.userRepository.findOneBy({
+      email: createGoogleUserDto.email,
+    });
+    if (checkByEmail) {
+      throw new ConflictException('Email adress already taken');
+    }
+
+    const res = await this.userRepository.save(createGoogleUserDto);
     this.logger.log(`User ${res.id} created successfully`);
 
     return res;

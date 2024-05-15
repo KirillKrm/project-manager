@@ -1,8 +1,8 @@
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { Exclude } from 'class-transformer';
+import { UUID } from 'crypto';
 
 import { PasswordTransformer } from '../../common/password.transformer';
-import { UUID } from 'crypto';
 
 @Entity({ name: 'users' })
 export class User extends BaseEntity {
@@ -12,7 +12,7 @@ export class User extends BaseEntity {
   @Column({ type: 'varchar', length: '64' })
   username: string;
 
-  @Column({ type: 'varchar', length: '255' })
+  @Column({ nullable: true, type: 'varchar', length: '255' })
   photo: string;
 
   @Column({ unique: true, type: 'varchar', length: '255' })
@@ -20,8 +20,8 @@ export class User extends BaseEntity {
 
   @Column({
     nullable: true,
-    //transformer: new PasswordTransformer(),
+    transformer: new PasswordTransformer(),
   })
-  //@Exclude({ toPlainOnly: true })
+  @Exclude({ toPlainOnly: true })
   password: string;
 }

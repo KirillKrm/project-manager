@@ -7,6 +7,9 @@ import {
   Res,
   UseGuards,
   Body,
+  Logger,
+  HttpException,
+  HttpCode,
 } from '@nestjs/common';
 import { Response } from 'express';
 
@@ -21,43 +24,44 @@ import { JwtRefreshDto } from './dto/jwt-refresh.dto';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(private readonly authService: AuthService) {}
 
   @Post('register')
+  @HttpCode(HttpStatus.CREATED)
   async register(@Body() payload: RegisterDto): Promise<User> {
     return this.authService.registerUser(payload);
   }
 
-  @UseGuards(LocalAuthGuard)
   @Post('login')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(LocalAuthGuard)
   async login(@Body() loginDto: LoginDto): Promise<JwtTokensDto> {
     return this.authService.getJwtTokens(loginDto.email);
   }
 
   @Get('google/login')
+  @HttpCode(HttpStatus.OK)
   @UseGuards(GoogleAuthGuard)
-  async googleAuthLogin() {
-    return { msg: 'Google Authentication' };
-  }
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  async googleAuthLogin() {}
 
   @Get('google/redirect')
+  @HttpCode(HttpStatus.OK)
   @UseGuards(GoogleAuthGuard)
   async googleAuthRedirect(@Req() req, @Res() res: Response) {
-    //const jwtToken = await this.authService.getJwtTokens(req.user.email);
+    const jwtToken = await this.authService.getJwtTokens(req.user.email);
 
-    return { msg: 'Success Google Authentication' };
-  }
+    res.cookie('access_token', jwtToken, {
+      maxAge: 2592000000,
+      sameSite: true,
+      secure: false,
+    });
 
-  @Get('status')
-  async status(@Req() req) {
-    if (req.user) {
-      return { msg: 'Authenticated' };
-    } else {
-      return { msg: 'Not Authenticated' };
-    }
+    return res.status(HttpStatus.OK);
   }
 
   @Post('refresh')
+  @HttpCode(HttpStatus.OK)
   async refresh(@Body() jwtRefreshDto: JwtRefreshDto): Promise<JwtTokensDto> {
     return this.authService.refreshJwt(jwtRefreshDto);
   }

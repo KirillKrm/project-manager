@@ -2,7 +2,7 @@ import { ValueTransformer } from 'typeorm';
 import { Hash } from './hash';
 
 export class PasswordTransformer implements ValueTransformer {
-  to(value: string | Buffer) {
+  to(value: any) {
     return Hash.make(value);
   }
 

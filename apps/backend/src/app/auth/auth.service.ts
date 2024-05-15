@@ -1,28 +1,31 @@
 import {
-  BadRequestException,
+  HttpException,
+  HttpStatus,
   Injectable,
-  InternalServerErrorException,
+  Logger,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { generateFromEmail } from 'unique-username-generator';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 import { User } from '../users/user.entity';
 import { UsersService } from '../users/users.service';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { JwtPayload } from './strategies/jwt.strategy';
-import { Hash } from '../../common/hash';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+//import { Hash } from '../../common/hash';
 import { RegisterDto } from './dto/register.dto';
 import { JwtTokensDto } from './dto/jwt-tokens.dto';
 import { JwtRefreshDto } from './dto/jwt-refresh.dto';
+import { Hash } from '../../common/hash';
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(
-    @InjectRepository(User) private readonly userRepository: Repository<User>,
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService
@@ -39,7 +42,11 @@ export class AuthService {
     email: string,
     password: string
   ): Promise<JwtPayload | null> {
-    const user = await this.userRepository.findOneBy({ email });
+    const user = await this.usersService.findOneByEmail(email);
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
 
     if (user && Hash.compare(password, user.password)) {
       return { id: user.id, email: user.email };
@@ -52,19 +59,15 @@ export class AuthService {
     username: string;
     photo: string;
   }): Promise<JwtPayload | null> {
-    const user = await this.userRepository.findOneBy({
-      email: userDetails.email,
-    });
+    const user = await this.usersService.findOneByEmail(userDetails.email);
 
     if (user) return user;
 
-    const newUser = this.userRepository.create(userDetails);
-
-    return this.userRepository.save(newUser);
+    return this.usersService.createGoogleUser(userDetails);
   }
 
   async getJwtTokens(email: string): Promise<JwtTokensDto> {
-    const user = await this.userRepository.findOneBy({ email });
+    const user = await this.usersService.findOneByEmail(email);
 
     const payload: JwtPayload = { id: user.id, email: user.email };
 
@@ -91,7 +94,7 @@ export class AuthService {
         secret: this.configService.get('JWT_REFRESH_SECRET'),
       });
     } catch (e) {
-      throw new UnauthorizedException('Invalid JWT');
+      throw new UnauthorizedException('Invalid refresh token');
     }
 
     const user: User = await this.usersService.findOne(jwtVerifyRes.id);

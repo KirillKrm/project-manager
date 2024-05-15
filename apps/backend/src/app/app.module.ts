@@ -1,33 +1,34 @@
-import { Module } from '@nestjs/common';
+import { ClassSerializerInterceptor, Logger, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule, TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
 import { PassportModule } from '@nestjs/passport';
-// import { validateSync } from 'class-validator';
+import { validateSync } from 'class-validator';
 
-// import { EnvConfigSchema } from '../config/env.config';
+import { EnvConfigSchema } from '../config/env.config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { User } from './users/user.entity';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 
 @Module({
   imports: [
-    // ConfigModule.forRoot({
-    //   isGlobal: true,
-    //   validate: (config: Record<string, unknown>) => {
-    //     const envConfig = Object.assign(new EnvConfigSchema(), config);
-    //     const errors = validateSync(envConfig);
-    //     if (errors.length > 0) {
-    //       console.error(errors);
-    //       throw new Error(
-    //         `Config validation error:\n ${JSON.stringify(errors)}`
-    //       );
-    //     }
+    ConfigModule.forRoot({
+      isGlobal: true,
+      validate: (config: Record<string, unknown>) => {
+        const envConfig = Object.assign(new EnvConfigSchema(), config);
+        const errors = validateSync(envConfig);
+        if (errors.length > 0) {
+          console.error(errors);
+          throw new Error(
+            `Config validation error:\n ${JSON.stringify(errors)}`
+          );
+        }
 
-    //     return envConfig;
-    //   },
-    // }),
+        return envConfig;
+      },
+    }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -46,9 +47,15 @@ import { User } from './users/user.entity';
     PassportModule.register({ session: true }),
     AuthModule,
     UsersModule,
-    ConfigModule.forRoot(),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    Logger,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ClassSerializerInterceptor,
+    },
+  ],
 })
 export class AppModule {}
