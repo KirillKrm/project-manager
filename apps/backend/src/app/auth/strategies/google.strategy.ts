@@ -4,6 +4,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 import { AuthService } from '../auth.service';
+import { VerifiedCallback } from 'passport-jwt';
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
@@ -19,7 +20,12 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     });
   }
 
-  async validate(accessToken: string, refreshToken: string, profile: Profile) {
+  async validate(
+    accessToken: string,
+    refreshToken: string,
+    profile: Profile,
+    done: VerifiedCallback
+  ) {
     const { name, emails, photos } = profile;
 
     const userDetails = {
@@ -28,8 +34,8 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       photo: photos[0].value,
     };
 
-    const user = this.authService.validateGoogleUser(userDetails);
+    const user = await this.authService.validateGoogleUser(userDetails);
 
-    return user || null;
+    return user ? done(null, user) : done(null, null);
   }
 }

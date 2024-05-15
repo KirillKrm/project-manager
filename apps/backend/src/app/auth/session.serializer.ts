@@ -8,13 +8,22 @@ export class SessionSerializer extends PassportSerializer {
     super();
   }
 
-  serializeUser(user: User, done: (err: Error | null, user: User) => void) {
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  serializeUser(user: any, done: Function) {
     done(null, user);
   }
 
-  async deserializeUser(payload: any, done: any) {
-    const user = await this.usersService.findOneByEmail(payload.email);
-
-    return user ? done(null, user) : done(null, null);
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  async deserializeUser(payload: any, done: Function) {
+    try {
+      const user = await this.usersService.findOneByEmail(payload.email);
+      if (user) {
+        done(null, user);
+      } else {
+        done(null, null);
+      }
+    } catch (error) {
+      done(error);
+    }
   }
 }

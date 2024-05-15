@@ -28,7 +28,7 @@ export class UsersService {
       email: createUserDto.email,
     });
     if (checkByEmail) {
-      throw new ConflictException('Email adress already taken');
+      throw new ConflictException('Email address already taken');
     }
 
     const res = await this.userRepository.save(createUserDto);
@@ -44,7 +44,7 @@ export class UsersService {
       email: createGoogleUserDto.email,
     });
     if (checkByEmail) {
-      throw new ConflictException('Email adress already taken');
+      throw new ConflictException('Email address already taken');
     }
 
     const res = await this.userRepository.save(createGoogleUserDto);

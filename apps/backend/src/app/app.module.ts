@@ -49,13 +49,6 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
     UsersModule,
   ],
   controllers: [AppController],
-  providers: [
-    AppService,
-    Logger,
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: ClassSerializerInterceptor,
-    },
-  ],
+  providers: [AppService, Logger],
 })
 export class AppModule {}

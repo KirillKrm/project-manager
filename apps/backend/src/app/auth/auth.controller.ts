@@ -48,16 +48,8 @@ export class AuthController {
   @Get('google/redirect')
   @HttpCode(HttpStatus.OK)
   @UseGuards(GoogleAuthGuard)
-  async googleAuthRedirect(@Req() req, @Res() res: Response) {
-    const jwtToken = await this.authService.getJwtTokens(req.user.email);
-
-    res.cookie('access_token', jwtToken, {
-      maxAge: 2592000000,
-      sameSite: true,
-      secure: false,
-    });
-
-    return res.status(HttpStatus.OK);
+  async googleAuthRedirect(@Req() req) {
+    return this.authService.getJwtTokens(req.user.email);
   }
 
   @Post('refresh')

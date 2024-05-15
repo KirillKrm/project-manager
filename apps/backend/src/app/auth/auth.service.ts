@@ -58,7 +58,7 @@ export class AuthService {
     email: string;
     username: string;
     photo: string;
-  }): Promise<JwtPayload | null> {
+  }): Promise<User> {
     const user = await this.usersService.findOneByEmail(userDetails.email);
 
     if (user) return user;
