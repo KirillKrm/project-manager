@@ -1,6 +1,4 @@
 import {
-  HttpException,
-  HttpStatus,
   Injectable,
   Logger,
   NotFoundException,
@@ -8,14 +6,11 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 
 import { User } from '../users/user.entity';
 import { UsersService } from '../users/users.service';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { JwtPayload } from './strategies/jwt.strategy';
-//import { Hash } from '../../common/hash';
 import { RegisterDto } from './dto/register.dto';
 import { JwtTokensDto } from './dto/jwt-tokens.dto';
 import { JwtRefreshDto } from './dto/jwt-refresh.dto';
@@ -49,7 +44,7 @@ export class AuthService {
     }
 
     if (user && Hash.compare(password, user.password)) {
-      return { id: user.id, email: user.email };
+      return { sub: user.id, email: user.email };
     }
     return null;
   }
@@ -69,14 +64,14 @@ export class AuthService {
   async getJwtTokens(email: string): Promise<JwtTokensDto> {
     const user = await this.usersService.findOneByEmail(email);
 
-    const payload: JwtPayload = { id: user.id, email: user.email };
+    const payload: JwtPayload = { sub: user.id, email: user.email };
 
-    const jwtAccessToken = this.jwtService.sign(payload, {
+    const jwtAccessToken = await this.jwtService.signAsync(payload, {
       secret: this.configService.get('JWT_SECRET'),
       expiresIn: this.configService.get('JWT_ACCESS_EXPIRE'),
     });
 
-    const jwtRefreshToken = this.jwtService.sign(payload, {
+    const jwtRefreshToken = await this.jwtService.signAsync(payload, {
       secret: this.configService.get('JWT_REFRESH_SECRET'),
       expiresIn: this.configService.get('JWT_REFRESH_EXPIRE'),
     });
@@ -97,8 +92,8 @@ export class AuthService {
       throw new UnauthorizedException('Invalid refresh token');
     }
 
-    const user: User = await this.usersService.findOne(jwtVerifyRes.id);
-    const payload: JwtPayload = { id: user.id, email: user.email };
+    const user: User = await this.usersService.findOne(jwtVerifyRes.sub);
+    const payload: JwtPayload = { sub: user.id, email: user.email };
     const jwtAccessToken = this.jwtService.sign(payload, {
       secret: this.configService.get('JWT_SECRET'),
       expiresIn: this.configService.get('JWT_ACCESS_EXPIRE'),

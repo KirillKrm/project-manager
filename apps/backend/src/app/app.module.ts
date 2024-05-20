@@ -1,4 +1,4 @@
-import { ClassSerializerInterceptor, Logger, Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule, TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
 import { PassportModule } from '@nestjs/passport';
@@ -10,7 +10,9 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { User } from './users/user.entity';
-import { APP_INTERCEPTOR } from '@nestjs/core';
+import { ProjectsModule } from './projects/projects.module';
+import { GlobalJwtModule } from './auth/jwt.module';
+import { Project } from './projects/project.entity';
 
 @Module({
   imports: [
@@ -40,13 +42,15 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
           username: configService.get('DB_USERNAME'),
           password: configService.get('DB_PASSWORD'),
           database: configService.get('DB_DATABASE'),
-          entities: [User],
+          entities: [User, Project],
           synchronize: true,
         } as TypeOrmModuleAsyncOptions),
     }),
+    GlobalJwtModule,
     PassportModule.register({ session: true }),
     AuthModule,
     UsersModule,
+    ProjectsModule,
   ],
   controllers: [AppController],
   providers: [AppService, Logger],

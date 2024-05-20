@@ -5,7 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import { UUID } from 'crypto';
 
 export type JwtPayload = {
-  id: UUID;
+  sub: UUID;
   email: string;
 };
 
@@ -21,7 +21,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   async validate(payload: JwtPayload) {
     return {
-      id: payload.id,
+      sub: payload.sub,
       email: payload.email,
     };
   }
