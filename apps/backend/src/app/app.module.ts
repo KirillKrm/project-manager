@@ -8,11 +8,13 @@ import { EnvConfigSchema } from '../config/env.config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
-import { UsersModule } from './users/users.module';
-import { User } from './users/user.entity';
-import { ProjectsModule } from './projects/projects.module';
 import { GlobalJwtModule } from './auth/jwt.module';
+import { User } from './users/user.entity';
+import { UsersModule } from './users/users.module';
 import { Project } from './projects/project.entity';
+import { ProjectsModule } from './projects/projects.module';
+import { Task } from './tasks/task.entity';
+import { TasksModule } from './tasks/tasks.module';
 
 @Module({
   imports: [
@@ -42,7 +44,7 @@ import { Project } from './projects/project.entity';
           username: configService.get('DB_USERNAME'),
           password: configService.get('DB_PASSWORD'),
           database: configService.get('DB_DATABASE'),
-          entities: [User, Project],
+          entities: [User, Project, Task],
           synchronize: true,
         } as TypeOrmModuleAsyncOptions),
     }),
@@ -51,6 +53,7 @@ import { Project } from './projects/project.entity';
     AuthModule,
     UsersModule,
     ProjectsModule,
+    TasksModule,
   ],
   controllers: [AppController],
   providers: [AppService, Logger],

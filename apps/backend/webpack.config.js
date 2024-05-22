@@ -4,6 +4,7 @@ const { join } = require('path');
 module.exports = {
   output: {
     path: join(__dirname, '../../dist/apps/backend'),
+    filename: 'main.js',
   },
   plugins: [
     new NxWebpackPlugin({
@@ -14,7 +15,6 @@ module.exports = {
       assets: [],
       optimization: false,
       outputHashing: 'none',
-      outputFileName: 'main.js',
     }),
   ],
 };

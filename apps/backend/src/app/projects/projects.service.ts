@@ -4,7 +4,7 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { DeleteResult, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UUID } from 'crypto';
 
@@ -39,7 +39,7 @@ export class ProjectsService {
     return res;
   }
 
-  async remove(userId: UUID, projectId: UUID): Promise<Project> {
+  async remove(userId: UUID, projectId: UUID): Promise<DeleteResult> {
     const project = await this.projectRepository.findOne({
       where: { id: projectId },
       relations: { user: true },
@@ -56,6 +56,19 @@ export class ProjectsService {
 
     const res = await this.projectRepository.delete({ id: projectId });
     this.logger.log(`Project ${projectId} deleted successfully`);
+
+    return res;
+  }
+
+  async findOne(id: UUID): Promise<Project> {
+    const project = await this.projectRepository.findOne({
+      where: { id },
+      relations: { user: true },
+    });
+    if (!project) {
+      throw new NotFoundException('Project not found');
+    }
+    this.logger.log(`Project ${project.id} fetched successfully`);
 
     return project;
   }
