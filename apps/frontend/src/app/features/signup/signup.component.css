@@ -1,0 +1,31 @@
+.signup {
+  @apply flex h-screen justify-center items-center;
+}
+
+.signup__form {
+  @apply flex flex-col w-96 p-6 bg-secondary/20 rounded-xl;
+}
+
+.form__title {
+  @apply flex justify-center mb-6 text-2xl;
+}
+
+.form__fields {
+  @apply flex flex-col;
+}
+
+.form__actions {
+  @apply flex flex-col justify-center items-center mb-4 gap-4;
+}
+
+.form__divider {
+  @apply flex items-center gap-2;
+}
+
+.link {
+  @apply text-blue-600;
+}
+
+.divider {
+  @apply border-white w-full;
+}

@@ -1,0 +1,40 @@
+<div class="login">
+  <form class="login__form" [formGroup]="loginForm" (ngSubmit)="login()">
+    <h2 class="form__title">Login</h2>
+    <div class="form__fields">
+      <mat-form-field>
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email" required />
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Password</mat-label>
+        <input
+          matInput
+          formControlName="password"
+          [type]="showPassword ? 'text' : 'password'"
+          required
+        />
+        <button mat-icon-button matSuffix (click)="clickShowPassword($event)">
+          <mat-icon color="primary">{{
+            showPassword ? 'visibility' : 'visibility_off'
+          }}</mat-icon>
+        </button>
+      </mat-form-field>
+    </div>
+    <div class="form__actions">
+      <button type="submit" mat-raised-button color="primary" cdkFocusInitial>
+        Login
+      </button>
+      <span>
+        You do not have an account?
+        <a href="/signup" class="link">Sign up</a>
+      </span>
+    </div>
+    <div class="form__divider">
+      <mat-divider class="divider" />
+      <span>OR</span>
+      <mat-divider class="divider" />
+    </div>
+    <button type="button" (click)="loginWithGoogle()">Login with Google</button>
+  </form>
+</div>

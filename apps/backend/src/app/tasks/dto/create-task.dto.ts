@@ -3,22 +3,21 @@ import { UUID } from 'crypto';
 
 export class CreateTaskDto {
   @IsNotEmpty()
-  @IsUUID()
-  @MaxLength(255)
-  projectId: UUID;
+  @IsUUID('4')
+  readonly projectId: UUID;
 
   @IsNotEmpty()
   @IsString()
   @MaxLength(255)
-  title: string;
+  readonly title: string;
 
   @IsNotEmpty()
   @IsString()
   @MaxLength(255)
-  status: string;
+  readonly status: string;
 
   @IsNotEmpty()
   @IsString()
   @MaxLength(255)
-  priority: string;
+  readonly priority: string;
 }
