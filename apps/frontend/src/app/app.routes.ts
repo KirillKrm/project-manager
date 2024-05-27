@@ -1,4 +1,5 @@
 import { Route } from '@angular/router';
+
 import { LoginComponent } from './features/login/login.component';
 import { ProfileComponent } from './features/profile/profile.component';
 import { ProjectComponent } from './features/project/project.component';

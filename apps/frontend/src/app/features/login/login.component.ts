@@ -17,6 +17,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
+import { environment } from 'apps/frontend/src/environments/environment';
 
 @Component({
   selector: 'app-login',
@@ -37,14 +38,25 @@ import { MatDividerModule } from '@angular/material/divider';
   styleUrls: ['./login.component.css'],
 })
 export class LoginComponent implements OnInit {
-  loginForm: FormGroup;
+  loginForm!: FormGroup;
+  googleClientId = environment.GOOGLE_CLIENT_ID;
+  googleLoginUrl = environment.GOOGLE_LOGIN_URL;
   showPassword = false;
 
   constructor(
     private authService: AuthService,
     private router: Router,
     private formBuilder: FormBuilder
-  ) {
+  ) {}
+
+  ngOnInit() {
+    const currentUrl = window.location.href;
+    if (currentUrl.includes('google/redirect')) {
+      this.authService.handleRedirect().subscribe((response) => {
+        localStorage.setItem('jwtTokens', response);
+        this.router.navigate(['/profile']);
+      });
+    }
     this.loginForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
       password: [
@@ -53,16 +65,12 @@ export class LoginComponent implements OnInit {
           Validators.required,
           Validators.minLength(6),
           Validators.maxLength(20),
-          Validators.pattern(
-            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,20}$/
-          ),
+          // Validators.pattern(
+          //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,20}$/
+          // ),
         ],
       ],
     });
-  }
-
-  ngOnInit() {
-    console.log();
   }
 
   clickShowPassword(event: MouseEvent) {
@@ -70,17 +78,17 @@ export class LoginComponent implements OnInit {
     event.stopPropagation();
   }
 
-  login(): void {
+  login() {
     if (this.loginForm.valid) {
       const { email, password } = this.loginForm.value;
-      // this.authService.login(email, password).subscribe(() => {
-      //   this.router.navigate(['/']);
-      // });
-      console.log(email, password);
+
+      this.authService.login(email, password).subscribe(() => {
+        this.router.navigate(['/profile']);
+      });
     }
   }
 
-  loginWithGoogle(): void {
-    //this.socialAuthService.signIn(GoogleLoginProvider.PROVIDER_ID);
+  googleLogin() {
+    this.authService.googleLogin();
   }
 }

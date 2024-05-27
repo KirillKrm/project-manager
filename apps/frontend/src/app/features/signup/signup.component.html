@@ -14,9 +14,33 @@
           [type]="showPassword ? 'text' : 'password'"
           required
         />
-        <button mat-icon-button matSuffix (click)="clickShowPassword($event)">
+        <button
+          type="button"
+          mat-icon-button
+          matSuffix
+          (click)="clickShowPassword($event)"
+        >
           <mat-icon color="primary">{{
             showPassword ? 'visibility' : 'visibility_off'
+          }}</mat-icon>
+        </button>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Confirm Password</mat-label>
+        <input
+          matInput
+          formControlName="confirmPassword"
+          [type]="showConfirmPassword ? 'text' : 'password'"
+          required
+        />
+        <button
+          type="button"
+          mat-icon-button
+          matSuffix
+          (click)="clickShowConfirmPassword($event)"
+        >
+          <mat-icon color="primary">{{
+            showConfirmPassword ? 'visibility' : 'visibility_off'
           }}</mat-icon>
         </button>
       </mat-form-field>

@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-
-import { AuthService } from '../../core/auth.service';
 import {
   FormBuilder,
   FormGroup,
@@ -17,6 +15,9 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
+
+import { AuthService } from '../../core/auth.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-signup',
@@ -37,36 +38,62 @@ import { MatDividerModule } from '@angular/material/divider';
   styleUrls: ['./signup.component.css'],
 })
 export class SignupComponent implements OnInit {
-  signupForm: FormGroup;
+  signupForm!: FormGroup;
+  googleClientId = environment.GOOGLE_CLIENT_ID;
+  googleLoginUrl = environment.GOOGLE_LOGIN_URL;
+  showPassword = false;
+  showConfirmPassword = false;
 
   constructor(
     private authService: AuthService,
     private router: Router,
     private formBuilder: FormBuilder
-  ) {
-    this.signupForm = this.formBuilder.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: [
-        '',
-        [
-          Validators.required,
-          Validators.minLength(6),
-          Validators.maxLength(20),
-          Validators.pattern(
-            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,20}$/
-          ),
-        ],
-      ],
-    });
-  }
+  ) {}
 
   ngOnInit() {
-    console.log();
+    this.signupForm = this.formBuilder.group(
+      {
+        email: ['', [Validators.required, Validators.email]],
+        password: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(6),
+            Validators.maxLength(20),
+            Validators.pattern(
+              /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,20}$/
+            ),
+          ],
+        ],
+        confirmPassword: ['', [Validators.required]],
+      },
+      {
+        validators: [
+          this.matchPasswordValidator('password', 'confirmPassword'),
+        ],
+      }
+    );
   }
 
-  showPassword = false;
+  matchPasswordValidator(passwordKey: string, confirmPasswordKey: string) {
+    return (group: FormGroup) => {
+      const password = group.controls[passwordKey];
+      const confirmPassword = group.controls[confirmPasswordKey];
+      if (password.value !== confirmPassword.value) {
+        return confirmPassword.setErrors({ noMatch: true });
+      } else {
+        return confirmPassword.setErrors(null);
+      }
+    };
+  }
+
   clickShowPassword(event: MouseEvent) {
     this.showPassword = !this.showPassword;
+    event.stopPropagation();
+  }
+
+  clickShowConfirmPassword(event: MouseEvent) {
+    this.showConfirmPassword = !this.showConfirmPassword;
     event.stopPropagation();
   }
 

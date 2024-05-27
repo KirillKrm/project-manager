@@ -14,7 +14,12 @@
           [type]="showPassword ? 'text' : 'password'"
           required
         />
-        <button mat-icon-button matSuffix (click)="clickShowPassword($event)">
+        <button
+          type="button"
+          mat-icon-button
+          matSuffix
+          (click)="clickShowPassword($event)"
+        >
           <mat-icon color="primary">{{
             showPassword ? 'visibility' : 'visibility_off'
           }}</mat-icon>
@@ -35,6 +40,8 @@
       <span>OR</span>
       <mat-divider class="divider" />
     </div>
-    <button type="button" (click)="loginWithGoogle()">Login with Google</button>
+    <div class="form__oauth">
+      <button (click)="googleLogin()">Login with Google</button>
+    </div>
   </form>
 </div>

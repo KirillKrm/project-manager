@@ -19,7 +19,7 @@
 }
 
 .form__divider {
-  @apply flex items-center gap-2;
+  @apply flex items-center mb-4 gap-2;
 }
 
 .link {

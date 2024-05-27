@@ -6,7 +6,9 @@
     />
     <span>Name Surname</span>
   </div>
-  <button mat-flat-button color="warn">Log Out</button>
+  <button (click)="clickLogout($event)" mat-flat-button color="warn">
+    Log Out
+  </button>
 </header>
 <mat-divider class="divider"></mat-divider>
 <main class="main">
