@@ -53,6 +53,15 @@ export class SignupComponent implements OnInit {
   ngOnInit() {
     this.signupForm = this.formBuilder.group(
       {
+        username: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(3),
+            Validators.maxLength(20),
+            Validators.pattern(/^[a-zA-Z0-9]+$/),
+          ],
+        ],
         email: ['', [Validators.required, Validators.email]],
         password: [
           '',
@@ -99,11 +108,10 @@ export class SignupComponent implements OnInit {
 
   signup(): void {
     if (this.signupForm.valid) {
-      const { email, password } = this.signupForm.value;
-      // this.authService.signup(email, password).subscribe(() => {
-      //   this.router.navigate(['/']);
-      // });
-      console.log(email, password);
+      const { username, email, password } = this.signupForm.value;
+      this.authService.register(username, email, password).subscribe(() => {
+        this.router.navigate(['/profile']);
+      });
     }
   }
 }

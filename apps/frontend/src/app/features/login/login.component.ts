@@ -17,7 +17,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
-import { environment } from 'apps/frontend/src/environments/environment';
+
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-login',
@@ -52,8 +53,7 @@ export class LoginComponent implements OnInit {
   ngOnInit() {
     const currentUrl = window.location.href;
     if (currentUrl.includes('google/redirect')) {
-      this.authService.handleRedirect().subscribe((response) => {
-        localStorage.setItem('jwtTokens', response);
+      this.authService.handleRedirect().subscribe(() => {
         this.router.navigate(['/profile']);
       });
     }

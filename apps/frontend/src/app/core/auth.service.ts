@@ -1,70 +1,71 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Router } from '@angular/router';
+import { CookieService } from 'ngx-cookie-service';
+import { jwtDecode } from 'jwt-decode';
+import { Observable } from 'rxjs';
 
 import { environment } from '../../environments/environment';
-import { Observable, catchError, map, throwError } from 'rxjs';
+import { Jwt } from '../shared/Jwt';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   private apiUrl = environment.API_URL;
-  private isAuthenticated = false;
   private loginUrl = `${this.apiUrl}/auth/google/login`;
   private redirectUrl = `${this.apiUrl}/auth/google/redirect`;
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient, private cookieService: CookieService) {}
 
-  isAuthenticatedUser(): boolean {
-    return this.isAuthenticated;
+  register(username: string, email: string, password: string): Observable<Jwt> {
+    return this.http.post<Jwt>(`${this.apiUrl}/auth/register`, {
+      username,
+      email,
+      password,
+    });
   }
 
-  register(email: string, password: string, username: string): void {
-    this.http
-      .post(`${this.apiUrl}/auth/register`, { email, password, username })
-      .subscribe((response) => {
-        localStorage.setItem('user', JSON.stringify(response));
-        this.router.navigate(['/profile']);
-      });
-  }
-
-  login(email: string, password: string): Observable<boolean> {
-    return this.http
-      .post(`${this.apiUrl}/auth/login`, { email, password })
-      .pipe(
-        map((tokens) => {
-          localStorage.setItem('jwtTokens', JSON.stringify(tokens));
-          this.isAuthenticated = true;
-          return true;
-        }),
-        catchError(() => {
-          return throwError(() => new Error('Login failed'));
-        })
-      );
+  login(email: string, password: string): Observable<Jwt> {
+    return this.http.post<Jwt>(
+      `${this.apiUrl}/auth/login`,
+      { email, password },
+      { withCredentials: true }
+    );
   }
 
   googleLogin(): void {
     window.location.href = this.loginUrl;
   }
 
-  handleRedirect(): Observable<any> {
-    this.isAuthenticated = true;
-    return this.http.get(this.redirectUrl, { withCredentials: true });
+  handleRedirect(): Observable<Jwt> {
+    return this.http.get<Jwt>(this.redirectUrl, {
+      withCredentials: true,
+    });
   }
 
-  refresh(refreshToken: string): void {
-    this.http
-      .post(`${this.apiUrl}/auth/refresh`, { refreshToken })
-      .subscribe((response) => {
-        localStorage.setItem('jwtTokens', JSON.stringify(response));
-        this.router.navigate(['/profile']);
-      });
+  refresh(): Observable<Jwt> {
+    return this.http.post<Jwt>(
+      `${this.apiUrl}/auth/refresh`,
+      {},
+      { withCredentials: true }
+    );
   }
 
   logout(): void {
-    localStorage.removeItem('jwtTokens');
-    localStorage.removeItem('user');
-    this.isAuthenticated = false;
+    this.cookieService.delete('accessToken');
+    this.cookieService.delete('refreshToken');
+  }
+
+  isTokenExpired(): boolean {
+    const accessToken = this.cookieService.get('accessToken');
+    if (!accessToken) {
+      return true;
+    }
+    try {
+      const { exp: expirationTime } = jwtDecode<{ exp: number }>(accessToken);
+      return Date.now() >= expirationTime * 1000;
+    } catch {
+      return true;
+    }
   }
 }

@@ -3,6 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import session from 'express-session';
 import passport from 'passport';
 import { ConfigService } from '@nestjs/config';
+import cookieParser from 'cookie-parser';
 
 import { AppModule } from './app/app.module';
 
@@ -12,7 +13,12 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   const port = configService.get('PORT');
 
-  app.enableCors();
+  const corsOptions = {
+    origin: 'http://localhost:4200',
+    credentials: true,
+  };
+
+  app.enableCors(corsOptions);
   app.setGlobalPrefix(globalPrefix);
   app.use(
     session({
@@ -26,6 +32,7 @@ async function bootstrap() {
   );
   app.use(passport.initialize());
   app.use(passport.session());
+  app.use(cookieParser());
 
   await app.listen(port);
   Logger.log(
