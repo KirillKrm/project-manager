@@ -58,4 +58,16 @@ export class TasksService {
 
     return res;
   }
+
+  async findAll(): Promise<Task[]> {
+    const tasks = await this.taskRepository.find({
+      relations: { project: { user: true } },
+    });
+    if (!tasks) {
+      throw new NotFoundException('Tasks not found');
+    }
+    this.logger.log(`${tasks.length} tasks fetched successfully`);
+
+    return tasks;
+  }
 }

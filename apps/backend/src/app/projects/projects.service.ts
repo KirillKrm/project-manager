@@ -72,4 +72,16 @@ export class ProjectsService {
 
     return project;
   }
+
+  async findAll(): Promise<Project[]> {
+    const projects = await this.projectRepository.find({
+      relations: { user: true },
+    });
+    if (!projects) {
+      throw new NotFoundException('Projects not found');
+    }
+    this.logger.log(`${projects.length} projects fetched successfully`);
+
+    return projects;
+  }
 }

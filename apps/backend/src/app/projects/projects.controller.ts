@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   HttpCode,
   HttpStatus,
   Param,
@@ -29,6 +30,13 @@ export class ProjectsController {
     @Body() createProjectDto: CreateProjectDto
   ): Promise<Project> {
     return this.projectsService.create(userJwtPayload.sub, createProjectDto);
+  }
+
+  @Get()
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  async findAll(): Promise<Project[]> {
+    return this.projectsService.findAll();
   }
 
   @Delete(':id')
