@@ -25,8 +25,8 @@
   @apply flex gap-4 text-xl;
 }
 .main__project {
-  @apply flex flex-col min-w-40 rounded-xl border border-secondary/20 select-none hover:bg-secondary/10;
+  @apply flex items-center p-4 min-w-40 rounded-xl border border-secondary/20 select-none hover:bg-secondary/10;
 }
 .project__content {
-  @apply flex p-4;
+  @apply flex;
 }

@@ -1,20 +1,19 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
-import { User } from '../shared/User';
+import { Project } from '../shared/Project';
 import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
-export class UserService {
+export class ProjectsService {
   private apiUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) {}
-
-  getMe(): Observable<User> {
-    return this.http.get<User>(`${this.apiUrl}/users/me`, {
+  getProjects(): Observable<Project[]> {
+    return this.http.get<Project[]>(`${this.apiUrl}/projects`, {
       withCredentials: true,
     });
   }

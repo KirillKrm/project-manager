@@ -28,12 +28,7 @@ import { TaskDialogComponent } from './task-dialog.component';
   styleUrl: './tasks.component.css',
 })
 export class TasksComponent {
-  tasks: Task[] = [
-    { title: 'Task 3', status: 'To Do', priority: 'Normal' },
-    { title: 'Task 1', status: 'Done', priority: 'Low' },
-    { title: 'Task 2', status: 'To Do', priority: 'High' },
-    { title: 'Task 4', status: 'Done', priority: 'Normal' },
-  ];
+  tasks: Task[] = [];
 
   constructor(public dialog: MatDialog) {}
 

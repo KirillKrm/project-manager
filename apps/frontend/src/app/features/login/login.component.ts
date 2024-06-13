@@ -40,8 +40,8 @@ import { environment } from '../../../environments/environment';
 })
 export class LoginComponent implements OnInit {
   loginForm!: FormGroup;
-  googleClientId = environment.GOOGLE_CLIENT_ID;
-  googleLoginUrl = environment.GOOGLE_LOGIN_URL;
+  googleClientId = environment.googleClientId;
+  googleLoginUrl = environment.googleLoginUrl;
   showPassword = false;
 
   constructor(

@@ -11,7 +11,7 @@ import { Jwt } from '../shared/Jwt';
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = environment.API_URL;
+  private apiUrl = environment.apiUrl;
   private loginUrl = `${this.apiUrl}/auth/google/login`;
   private redirectUrl = `${this.apiUrl}/auth/google/redirect`;
 

@@ -39,8 +39,8 @@ import { environment } from '../../../environments/environment';
 })
 export class SignupComponent implements OnInit {
   signupForm!: FormGroup;
-  googleClientId = environment.GOOGLE_CLIENT_ID;
-  googleLoginUrl = environment.GOOGLE_LOGIN_URL;
+  googleClientId = environment.googleClientId;
+  googleLoginUrl = environment.googleLoginUrl;
   showPassword = false;
   showConfirmPassword = false;
 

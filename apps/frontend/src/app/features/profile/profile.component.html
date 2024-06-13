@@ -1,10 +1,7 @@
 <header class="header">
   <div class="header__profile">
-    <img
-      class="profile__image"
-      src="https://media.istockphoto.com/id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=612x612&w=0&k=20&c=yBeyba0hUkh14_jgv1OKqIH0CCSWU_4ckRkAoy2p73o="
-    />
-    <span>Name Surname</span>
+    <img class="profile__image" [src]="user?.photo || defaultPhotoUrl" />
+    <span>{{ user?.username }}</span>
   </div>
   <button (click)="clickLogout($event)" mat-flat-button color="warn">
     Log Out
@@ -14,13 +11,17 @@
 <main class="main">
   <h1 class="main__title">Projects</h1>
   <div class="main__projects">
+    <a class="main__project">
+      <mat-icon class="project__icon">add</mat-icon>
+      <div class="project__content">Create Project</div>
+    </a>
     <a
       *ngFor="let project of projects"
-      [routerLink]="['/project', project.trim()]"
+      [routerLink]="['/project', project.title.trim()]"
       class="main__project"
     >
       <div class="project__content">
-        {{ project }}
+        {{ project.title }}
       </div>
     </a>
   </div>
