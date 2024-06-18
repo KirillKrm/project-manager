@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { CookieService } from 'ngx-cookie-service';
 import { jwtDecode } from 'jwt-decode';
-import { Observable } from 'rxjs';
+import { Observable, catchError, throwError } from 'rxjs';
 
 import { environment } from '../../environments/environment';
 import { Jwt } from '../shared/Jwt';
@@ -17,20 +17,39 @@ export class AuthService {
 
   constructor(private http: HttpClient, private cookieService: CookieService) {}
 
-  register(username: string, email: string, password: string): Observable<Jwt> {
-    return this.http.post<Jwt>(`${this.apiUrl}/auth/register`, {
-      username,
-      email,
-      password,
-    });
+  register(
+    username: string,
+    email: string,
+    password: string
+  ): Observable<Jwt | string> {
+    return this.http
+      .post<Jwt>(`${this.apiUrl}/auth/register`, {
+        username,
+        email,
+        password,
+      })
+      .pipe(catchError(this.handleError));
   }
 
-  login(email: string, password: string): Observable<Jwt> {
-    return this.http.post<Jwt>(
-      `${this.apiUrl}/auth/login`,
-      { email, password },
-      { withCredentials: true }
-    );
+  login(email: string, password: string): Observable<Jwt | string> {
+    return this.http
+      .post<Jwt>(
+        `${this.apiUrl}/auth/login`,
+        { email, password },
+        { withCredentials: true }
+      )
+      .pipe(catchError(this.handleError));
+  }
+
+  handleError(error: HttpErrorResponse) {
+    let errorMessage = '';
+    if (error.error instanceof ErrorEvent) {
+      errorMessage = `Error: ${error.error.message}`;
+    } else {
+      errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
+    }
+
+    return throwError(() => errorMessage);
   }
 
   googleLogin(): void {

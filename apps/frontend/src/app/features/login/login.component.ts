@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { merge } from 'rxjs';
 
-import { AuthService } from '../../core/auth.service';
 import {
-  FormBuilder,
+  FormControl,
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
@@ -18,6 +19,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 
+import { AuthService } from '../../core/auth.service';
 import { environment } from '../../../environments/environment';
 
 @Component({
@@ -39,16 +41,43 @@ import { environment } from '../../../environments/environment';
   styleUrls: ['./login.component.css'],
 })
 export class LoginComponent implements OnInit {
-  loginForm!: FormGroup;
   googleClientId = environment.googleClientId;
   googleLoginUrl = environment.googleLoginUrl;
+
+  loginForm = new FormGroup({
+    email: new FormControl('', [Validators.required, Validators.email]),
+    password: new FormControl('', [
+      Validators.required,
+      Validators.minLength(6),
+      Validators.maxLength(20),
+      // Validators.pattern(
+      //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,20}$/
+      // ),
+    ]),
+  });
+  emailErrorMessage = signal('');
+  passwordErrorMessage = signal('');
+  errorMessage = '';
   showPassword = false;
 
-  constructor(
-    private authService: AuthService,
-    private router: Router,
-    private formBuilder: FormBuilder
-  ) {}
+  constructor(private authService: AuthService, private router: Router) {
+    merge(
+      this.loginForm.controls.email.statusChanges,
+      this.loginForm.controls.email.valueChanges
+    )
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => {
+        this.updateEmailErrorMessage();
+      });
+    merge(
+      this.loginForm.controls.password.statusChanges,
+      this.loginForm.controls.password.valueChanges
+    )
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => {
+        this.updatePasswordErrorMessage();
+      });
+  }
 
   ngOnInit() {
     const currentUrl = window.location.href;
@@ -57,20 +86,22 @@ export class LoginComponent implements OnInit {
         this.router.navigate(['/profile']);
       });
     }
-    this.loginForm = this.formBuilder.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: [
-        '',
-        [
-          Validators.required,
-          Validators.minLength(6),
-          Validators.maxLength(20),
-          // Validators.pattern(
-          //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,20}$/
-          // ),
-        ],
-      ],
-    });
+  }
+
+  updateEmailErrorMessage() {
+    if (this.loginForm.controls.email.invalid) {
+      this.emailErrorMessage.set('Email is invalid');
+    } else {
+      this.emailErrorMessage.set('');
+    }
+  }
+
+  updatePasswordErrorMessage() {
+    if (this.loginForm.controls.password.invalid) {
+      this.passwordErrorMessage.set('Password is invalid');
+    } else {
+      this.passwordErrorMessage.set('');
+    }
   }
 
   clickShowPassword(event: MouseEvent) {
@@ -79,11 +110,23 @@ export class LoginComponent implements OnInit {
   }
 
   login() {
-    if (this.loginForm.valid) {
-      const { email, password } = this.loginForm.value;
+    if (this.loginForm.invalid) {
+      console.error('Form is invalid');
+      return;
+    }
 
-      this.authService.login(email, password).subscribe(() => {
-        this.router.navigate(['/profile']);
+    const { email, password } = this.loginForm.value;
+
+    if (email && password) {
+      this.authService.login(email, password).subscribe({
+        next: () => {
+          if (this.router) {
+            this.router.navigate(['/profile']);
+          }
+        },
+        error: (error) => {
+          this.errorMessage = error;
+        },
       });
     }
   }

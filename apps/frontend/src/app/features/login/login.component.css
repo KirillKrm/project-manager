@@ -33,3 +33,7 @@
 .divider {
   @apply border-white w-full;
 }
+
+.error-message {
+  @apply text-red-500;
+}

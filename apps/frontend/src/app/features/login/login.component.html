@@ -5,6 +5,9 @@
       <mat-form-field>
         <mat-label>Email</mat-label>
         <input matInput formControlName="email" required />
+        @if (this.loginForm.controls.email.invalid) {
+        <mat-error>{{ emailErrorMessage() }}</mat-error>
+        }
       </mat-form-field>
       <mat-form-field>
         <mat-label>Password</mat-label>
@@ -24,7 +27,13 @@
             showPassword ? 'visibility' : 'visibility_off'
           }}</mat-icon>
         </button>
+        @if (this.loginForm.controls.password.invalid) {
+        <mat-error>{{ passwordErrorMessage() }}</mat-error>
+        }
       </mat-form-field>
+      <div *ngIf="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
     </div>
     <div class="form__actions">
       <button type="submit" mat-raised-button color="primary" cdkFocusInitial>
