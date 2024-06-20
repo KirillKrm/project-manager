@@ -7,7 +7,7 @@ import { SignupComponent } from './features/signup/signup.component';
 import { SettingsComponent } from './features/project/components/settings/settings.component';
 import { FinancesComponent } from './features/project/components/finances/finances.component';
 import { TasksComponent } from './features/project/components/tasks/tasks.component';
-import { authGuard } from './core/auth.guard';
+import { authGuard } from './core/guards/auth.guard';
 
 export const appRoutes: Route[] = [
   {

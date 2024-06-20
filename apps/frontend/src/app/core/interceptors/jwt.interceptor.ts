@@ -10,8 +10,8 @@ import { Observable, BehaviorSubject, throwError } from 'rxjs';
 import { catchError, filter, take, switchMap } from 'rxjs/operators';
 import { CookieService } from 'ngx-cookie-service';
 
-import { AuthService } from './auth.service';
-import { Jwt } from '../shared/Jwt';
+import { AuthService } from '../services/auth.service';
+import { Jwt } from '../../types/Jwt';
 
 @Injectable()
 export class JwtInterceptor implements HttpInterceptor {

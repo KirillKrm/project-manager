@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Task } from '../shared/Task';
+import { Task } from '../../types/Task';
 
 @Injectable({
   providedIn: 'root',

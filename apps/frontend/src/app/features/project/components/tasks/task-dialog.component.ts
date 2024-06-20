@@ -18,8 +18,8 @@ import {
   MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
 
-import { Task } from '../../../../shared/Task';
-import { TasksService } from '../../../../core/tasks.service';
+import { Task } from '../../../../types/Task';
+import { TasksService } from '../../../../core/services/tasks.service';
 
 @Component({
   selector: 'app-task-dialog',

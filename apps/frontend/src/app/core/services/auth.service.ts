@@ -4,8 +4,8 @@ import { CookieService } from 'ngx-cookie-service';
 import { jwtDecode } from 'jwt-decode';
 import { Observable, catchError, throwError } from 'rxjs';
 
-import { environment } from '../../environments/environment';
-import { Jwt } from '../shared/Jwt';
+import { environment } from '../../../environments/environment';
+import { Jwt } from '../../types/Jwt';
 
 @Injectable({
   providedIn: 'root',
@@ -63,11 +63,9 @@ export class AuthService {
   }
 
   refresh(): Observable<Jwt> {
-    return this.http.post<Jwt>(
-      `${this.apiUrl}/auth/refresh`,
-      {},
-      { withCredentials: true }
-    );
+    return this.http.post<Jwt>(`${this.apiUrl}/auth/refresh`, {
+      withCredentials: true,
+    });
   }
 
   logout(): void {

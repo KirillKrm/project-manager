@@ -1,8 +1,7 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { merge } from 'rxjs';
+import { Subject, merge, takeUntil } from 'rxjs';
 
 import {
   FormControl,
@@ -19,7 +18,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 
-import { AuthService } from '../../core/auth.service';
+import { AuthService } from '../../core/services/auth.service';
 import { environment } from '../../../environments/environment';
 
 @Component({
@@ -40,9 +39,11 @@ import { environment } from '../../../environments/environment';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, OnDestroy {
   googleClientId = environment.googleClientId;
   googleLoginUrl = environment.googleLoginUrl;
+
+  private unsubscribe$ = new Subject<void>();
 
   loginForm = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
@@ -65,7 +66,7 @@ export class LoginComponent implements OnInit {
       this.loginForm.controls.email.statusChanges,
       this.loginForm.controls.email.valueChanges
     )
-      .pipe(takeUntilDestroyed())
+      .pipe(takeUntil(this.unsubscribe$))
       .subscribe(() => {
         this.updateEmailErrorMessage();
       });
@@ -73,7 +74,7 @@ export class LoginComponent implements OnInit {
       this.loginForm.controls.password.statusChanges,
       this.loginForm.controls.password.valueChanges
     )
-      .pipe(takeUntilDestroyed())
+      .pipe(takeUntil(this.unsubscribe$))
       .subscribe(() => {
         this.updatePasswordErrorMessage();
       });
@@ -82,9 +83,12 @@ export class LoginComponent implements OnInit {
   ngOnInit() {
     const currentUrl = window.location.href;
     if (currentUrl.includes('google/redirect')) {
-      this.authService.handleRedirect().subscribe(() => {
-        this.router.navigate(['/profile']);
-      });
+      this.authService
+        .handleRedirect()
+        .pipe(takeUntil(this.unsubscribe$))
+        .subscribe(() => {
+          this.router.navigate(['/profile']);
+        });
     }
   }
 
@@ -118,20 +122,28 @@ export class LoginComponent implements OnInit {
     const { email, password } = this.loginForm.value;
 
     if (email && password) {
-      this.authService.login(email, password).subscribe({
-        next: () => {
-          if (this.router) {
-            this.router.navigate(['/profile']);
-          }
-        },
-        error: (error) => {
-          this.errorMessage = error;
-        },
-      });
+      this.authService
+        .login(email, password)
+        .pipe(takeUntil(this.unsubscribe$))
+        .subscribe({
+          next: () => {
+            if (this.router) {
+              this.router.navigate(['/profile']);
+            }
+          },
+          error: (error) => {
+            this.errorMessage = error;
+          },
+        });
     }
   }
 
   googleLogin() {
     this.authService.googleLogin();
+  }
+
+  ngOnDestroy(): void {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 }

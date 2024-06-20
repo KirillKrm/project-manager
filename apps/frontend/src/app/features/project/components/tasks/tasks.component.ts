@@ -8,8 +8,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatTableModule } from '@angular/material/table';
 import { Sort, MatSortModule } from '@angular/material/sort';
 
-import { Task } from '../../../../shared/Task';
-import { FilterPipe } from './filter.pipe';
+import { Task } from '../../../../types/Task';
+import { FilterPipe } from '../../../../pipes/filter.pipe';
 import { TaskDialogComponent } from './task-dialog.component';
 
 @Component({

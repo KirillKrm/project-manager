@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import {
@@ -8,6 +8,8 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { Subject, takeUntil } from 'rxjs';
+
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -16,7 +18,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 
-import { AuthService } from '../../core/auth.service';
+import { AuthService } from '../../core/services/auth.service';
 import { environment } from '../../../environments/environment';
 
 @Component({
@@ -37,12 +39,14 @@ import { environment } from '../../../environments/environment';
   templateUrl: './signup.component.html',
   styleUrls: ['./signup.component.css'],
 })
-export class SignupComponent implements OnInit {
+export class SignupComponent implements OnInit, OnDestroy {
   signupForm!: FormGroup;
   googleClientId = environment.googleClientId;
   googleLoginUrl = environment.googleLoginUrl;
   showPassword = false;
   showConfirmPassword = false;
+
+  private unsubscribe$ = new Subject<void>();
 
   constructor(
     private authService: AuthService,
@@ -109,9 +113,17 @@ export class SignupComponent implements OnInit {
   signup(): void {
     if (this.signupForm.valid) {
       const { username, email, password } = this.signupForm.value;
-      this.authService.register(username, email, password).subscribe(() => {
-        this.router.navigate(['/profile']);
-      });
+      this.authService
+        .register(username, email, password)
+        .pipe(takeUntil(this.unsubscribe$))
+        .subscribe(() => {
+          this.router.navigate(['/profile']);
+        });
     }
+  }
+
+  ngOnDestroy(): void {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 }
